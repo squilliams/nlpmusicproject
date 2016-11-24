@@ -76,39 +76,50 @@ public class jsonParse {
     }
 
     private static void addtomusiclist(String input){
-        String sep1 = "-";
-        String sep2 = "by";
 
-        Pattern p1 = Pattern.compile(sep1);
+        Pattern p0 = Pattern.compile("[.]*\"([^\"]*)\"[.]*");
 
-        //Masalah match dengan pola "-"
-        Matcher matcher1 = p1.matcher(input);
-        int count = 0;
-        while(matcher1.find()){
-            count++;
-        }
-        if (count > 0) {
-            String[] candidate = input.split("-");
-            int i = 0;
-            for (i=0; i<candidate.length-1; i++) {
-                localmusiclist.add(new musicdata(candidate[i], candidate[i+1]));
-                localmusiclist.add(new musicdata(candidate[i+1], candidate[i]));
+        Matcher matcher0 = p0.matcher(input);
+
+        if (matcher0.find()){
+            String lagu = matcher0.group();
+            String artis = removeUnused(input, "[.]*\"([^\"]*)\"[.]*");
+            localmusiclist.add(new musicdata(artis, lagu));
+            System.out.println(artis);
+        }else{
+            String sep1 = "-";
+            String sep2 = "by";
+
+            Pattern p1 = Pattern.compile(sep1);
+
+            //Masalah match dengan pola "-"
+            Matcher matcher1 = p1.matcher(input);
+            int count = 0;
+            while(matcher1.find()){
+                count++;
+            }
+            if (count > 0) {
+                String[] candidate = input.split("-");
+                int i = 0;
+                for (i=0; i<candidate.length-1; i++) {
+                    localmusiclist.add(new musicdata(candidate[i], candidate[i+1]));
+                    localmusiclist.add(new musicdata(candidate[i+1], candidate[i]));
+                }
+            }
+
+            Pattern p2 = Pattern.compile(sep2);
+
+            //Masalah match dengan pola by
+            Matcher matcher2 = p2.matcher(input);
+            int count2 = 0;
+            while (matcher2.find()){
+                count2++;
+            }
+            if (count2 > 0){
+                String[] candidate = input.split("by");
+                localmusiclist.add(new musicdata(candidate[1], candidate[0]));
             }
         }
-
-        Pattern p2 = Pattern.compile(sep2);
-
-        //Masalah match dengan pola by
-        Matcher matcher2 = p2.matcher(input);
-        int count2 = 0;
-        while (matcher2.find()){
-            count2++;
-        }
-        if (count2 > 0){
-            String[] candidate = input.split("by");
-            localmusiclist.add(new musicdata(candidate[1], candidate[0]));
-        }
-
     }
 }
 
