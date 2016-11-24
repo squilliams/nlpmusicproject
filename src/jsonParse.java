@@ -1,0 +1,100 @@
+/**
+ * Created by Bimo on 15-Nov-16.
+ */
+
+import org.json.simple.parser.JSONParser;
+
+import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+public class jsonParse {
+
+    public static void main(String args[]) {
+        JSONParser parser = new JSONParser();
+        ArrayList<String> listoftwit = new ArrayList<String>();
+        String temp;
+        String content;
+        String cleancontent;
+        String urlPattern = "((https?|ftp|gopher|telnet|file|Unsure|http):((//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)";
+        String hashtagPattern = "#\\w+";
+
+        try {
+
+            File f = new File("music.json");
+            Scanner scanner = new Scanner(f);
+
+            while (scanner.hasNext()){
+                temp = scanner.nextLine();
+                JSONObject tweet = (JSONObject) parser.parse(temp);
+                content = (String) tweet.get("content");
+
+                cleancontent = removeUnused(content, hashtagPattern);
+                cleancontent = removeUnused(cleancontent, urlPattern);
+
+                listoftwit.add(cleancontent);
+
+            }
+
+            System.out.println(listoftwit.get(333));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private static String removeUnused(String commentstr, String pattern){
+
+        String removePattern = pattern;
+        Pattern p = Pattern.compile(removePattern);
+        Matcher m = p.matcher(commentstr);
+
+        int i = 0;
+        while (m.find()) {
+            commentstr = m.replaceAll("");
+            i++;
+        }
+
+        return commentstr;
+    }
+
+    private static void addtomusiclist(String input){
+        String sep1 = "-";
+        String sep2 = "by";
+        ArrayList<musicdata> localmusiclist = new ArrayList<musicdata>();
+
+        Pattern p1 = Pattern.compile(input);
+
+        //Masalah match dengan pola "-"
+        Matcher matcher1 = p1.matcher(sep1);
+        int count = 0;
+        while(matcher1.find()){
+            count++;
+        }
+        if (count > 0) {
+            String[] candidate = input.split("-");
+            int i = 0;
+            for (i=0; i<candidate.length-1; i++) {
+                localmusiclist.add(new musicdata(candidate[i], candidate[i+1]));
+                localmusiclist.add(new musicdata(candidate[i+1], candidate[i]));
+            }
+        }
+
+        //Masalah match dengan pola by
+        Matcher matcher2 = p1.matcher(sep2);
+        int count2 = 0;
+        while (matcher2.find()){
+            count++;
+        }
+        if (count > 0){
+            String[] candidate = input.split("by");
+            localmusiclist.add(new musicdata(candidate[1], candidate[0]));
+        }
+    }
+}
+
