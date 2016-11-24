@@ -29,6 +29,7 @@ public class jsonParse {
         String urlPattern = "((https?|ftp|gopher|telnet|file|Unsure|http):((//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)";
         String hashtagPattern = "#\\w+";
         String bintangPattern = "\\*";
+        String retweetpattern = "RT @\\w+:";
         try {
 
             File f = new File("music.json");
@@ -42,6 +43,7 @@ public class jsonParse {
                 cleancontent = removeUnused(content, hashtagPattern);
                 cleancontent = removeUnused(cleancontent, urlPattern);
                 cleancontent = removeUnused(cleancontent, bintangPattern);
+                cleancontent = removeUnused(cleancontent, retweetpattern);
 
                 listoftwit.add(cleancontent);
 
@@ -53,8 +55,6 @@ public class jsonParse {
                 addtomusiclist(listoftwit.get(i));
             }
 
-            System.out.println(listoftwit.get(10));
-            System.out.println(localmusiclist.get(25).getSong());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -85,7 +85,6 @@ public class jsonParse {
             String lagu = matcher0.group();
             String artis = removeUnused(input, "[.]*\"([^\"]*)\"[.]*");
             localmusiclist.add(new musicdata(artis, lagu));
-            System.out.println(artis);
         }else{
             String sep1 = "-";
             String sep2 = "by";
