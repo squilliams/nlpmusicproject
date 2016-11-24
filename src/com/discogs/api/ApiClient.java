@@ -58,7 +58,7 @@ public class ApiClient {
 	/**
 	 * The Artist resource represents a person in the Discogs database who contributed to a Release in some capacity.
 	 * Retrieves an artist by Name.
-	 * 
+	 *
 	 * @param name 	name of the artist.
 	 * @return an artist by name.
 	 * @throws ApiRequestException
@@ -66,18 +66,18 @@ public class ApiClient {
 	public Artist getArtist(String name) throws ApiRequestException {
 		JsonObject jsonArtist = call("artist", name, null, false);
 		if (jsonArtist == null) return null;
-		
+
 		String id = getStringValueOrNull(jsonArtist, "id");
 		Artist artist = null;
 		if (id != null)
 			artist = getArtist(Integer.parseInt(id));
 		return artist;
 	}
-	
+
 	/**
 	 * The Artist resource represents a person in the Discogs database who contributed to a Release in some capacity.
 	 * Retrieves an artist by ID.
-	 * 
+	 *
 	 * @param id 	id of the artist.
 	 * @return an artist by ID.
 	 * @throws ApiRequestException
@@ -85,7 +85,7 @@ public class ApiClient {
 	public Artist getArtist(int id) throws ApiRequestException {
 		JsonObject jsonArtist = call("artists", String.valueOf(id), null, false);
 		if (jsonArtist == null) return null;
-		
+
 		Artist artist = new Artist();
 		artist.setId(Long.valueOf(getStringValueOrNull(jsonArtist, "id")));
 		artist.setName(getStringValueOrNull(jsonArtist, "name"));
@@ -107,19 +107,19 @@ public class ApiClient {
 
 		return artist;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param id
 	 * @return
-	 * @throws ApiRequestException 
+	 * @throws ApiRequestException
 	 */
 	public Release getRelease(String id) throws ApiRequestException {
 		JsonObject jobj = call("release", id, null, true);
 		if (jobj == null) return null;
 		JsonObject jsonRelease = jobj.getAsJsonObject("release");
 		if (jsonRelease == null) return null;
-		
+
 		Release release = new Release();
 		release.setId(Long.valueOf(getStringValueOrNull(jsonRelease, "id")));
 		release.setStatus(getStringValueOrNull(jsonRelease, "status"));
@@ -136,7 +136,7 @@ public class ApiClient {
 		} catch (JsonValueObtainException e) {
 			throw new ApiRequestException(e);
 		}
-		
+
 		JsonObject objCommunity = jsonRelease.get("community").getAsJsonObject();
 		if (objCommunity != null) {
 			Community community = new Community();
@@ -161,7 +161,7 @@ public class ApiClient {
 			community.setData_quality(getStringValueOrNull(objCommunity, "data_quality"));
 			release.setCommunity(community);
 		}
-		
+
 		release.setReleased(getStringValueOrNull(jsonRelease, "released"));
 		release.setMasterUrl(getStringValueOrNull(jsonRelease, "master_url"));
 		release.setYear(Utils.safeInt(getStringValueOrNull(jsonRelease, "year")));
@@ -214,7 +214,7 @@ public class ApiClient {
 		release.setFormats(formats);
 		release.setResourceUrl(getStringValueOrNull(jsonRelease, "resource_url"));
 		release.setMasterId(Utils.safeLong(getStringValueOrNull(jsonRelease, "master_id")));
-		
+
 		JsonArray arrTracklist = jsonRelease.get("tracklist").getAsJsonArray();
 		List<Track> tracklist = new ArrayList<Track>(arrTracklist.size());
 		for (int i = 0; i < arrTracklist.size(); i++) {
@@ -233,12 +233,12 @@ public class ApiClient {
 		}
 		release.setTracklist(tracklist);
 		release.setDataQuality(getStringValueOrNull(jsonRelease, "data_quality"));
-		System.out.println(release.getArtists());
+		//System.out.println(release.getArtists());
 		return release;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param id
 	 * @return
 	 * @throws ApiRequestException
@@ -247,7 +247,7 @@ public class ApiClient {
 		JsonObject jobj = call("master", id, null, true);
 		if (jobj == null) return null;
 		JsonObject jsonMaster = jobj.getAsJsonObject();
-		
+
 		Master master = new Master();
 		master.setStyles(getStringArrayValueOrNull(jsonMaster, "styles"));
 		master.setGenres(getStringArrayValueOrNull(jsonMaster, "genres"));
@@ -284,13 +284,13 @@ public class ApiClient {
 		}
 		master.setId(Long.parseLong(getStringValueOrNull(jsonMaster, "id")));
 		master.setDataQuality(getStringValueOrNull(jsonMaster, "data_quality"));
-		
-		System.out.println(master);
+
+		//System.out.println(master);
 		return master;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param id
 	 * @return
 	 * @throws ApiRequestException
@@ -311,11 +311,11 @@ public class ApiClient {
 		try {
 			label.setParentLabel((Label) getObjectValueOrNull(jsonLabel, Label.class));
 		} catch (JsonValueObtainException e) {
-			throw new ApiRequestException(e); 
+			throw new ApiRequestException(e);
 		}
 		// TODO: get all labels info
 		label.setSubLabels(getStringArrayValueOrNull(jsonLabel, "sublabels"));
-		
+
 		label.setUrls(getStringArrayValueOrNull(jsonLabel, "urls"));
 		try {
 			label.setImages(getObjectListOrNull(jsonLabel, "images", Image.class));
@@ -324,19 +324,19 @@ public class ApiClient {
 		}
 		return label;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param id
 	 * @return
 	 * @throws ApiRequestException
 	 */
 	public Image getImage(String id) throws ApiRequestException {
 		JsonObject jsonImage = call("images", id, null, false);
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * TODO: check the implementation
 	 * The Search resource lists objects in the database that meet the criteria you specify.
@@ -356,19 +356,19 @@ public class ApiClient {
 		pagination.setPerPage(Integer.parseInt(getStringValueOrNull(jsonPagination, "per_page")));
 		pagination.setPages(Long.parseLong(getStringValueOrNull(jsonPagination, "pages")));
 		pagination.setPage(Integer.parseInt(getStringValueOrNull(jsonPagination, "page")));
-		pagination.setPages(Long.parseLong(getStringValueOrNull(jsonPagination, "items")));
+		pagination.setItems(Long.parseLong(getStringValueOrNull(jsonPagination, "items")));
 		try {
 			pagination.setUrls((SearchResults.Pagination.Url) getObjectValueOrNull(jsonPagination, "urls", SearchResults.Pagination.Url.class));
 		} catch (JsonValueObtainException e) {
 			throw new ApiRequestException(e);
 		}
 		searchResult.setPagination(pagination);
-		
+
 		// ---------------------------------------
 		JsonArray jsonResults = jsonSearchResult.get("results").getAsJsonArray();
-		
+
 		List<SearchResults.Result> results = new ArrayList<SearchResults.Result>(jsonResults.size());
-		
+
 		for (Iterator<JsonElement> itr = jsonResults.iterator(); itr.hasNext();) {
 			SearchResults.Result result = new SearchResults.Result();
 			JsonObject obj = itr.next().getAsJsonObject();
@@ -386,23 +386,23 @@ public class ApiClient {
 			results.add(result);
 		}
 		searchResult.setResults(results);
-		
-		System.out.println("Search: " + searchResult);
+
+		//System.out.println("Search: " + searchResult);
 		return searchResult;
 	}
-	
+
 	/**
 	 * Returns the list of listings in a user’s inventory.
-	 * Basic information about each listing and the corresponding release is provided, suitable for display in a list. 
+	 * Basic information about each listing and the corresponding release is provided, suitable for display in a list.
 	 * For detailed information about the release, make another API call to fetch the corresponding Release.
-	 * 
+	 *
 	 * @return
 	 * @throws ApiRequestException
 	 */
 	public Inventory getInventory() throws ApiRequestException {
-		throw new UnsupportedOperationException("method is not implemented"); 
+		throw new UnsupportedOperationException("method is not implemented");
 	}
-	
+
 	/**
 	 * The Listing resource allows you to view and manage Marketplace listings.
 	 * @param id if of the lising.
@@ -438,10 +438,10 @@ public class ApiClient {
 		} catch (JsonValueObtainException e) {
 			throw new ApiRequestException(e);
 		}
-		
+
 		return listing;
 	}
-	
+
 	/**
 	 * View the data associated with an order.
 	 * Authentication as the seller is required.
@@ -452,7 +452,7 @@ public class ApiClient {
 	public Order getOrder(String id) throws ApiRequestException {
 		JsonObject jobj = call("marketplace/orders", id, null, false);
 		if (jobj == null) return null;
-		
+
 		Order order = null;
 		try {
 			order = new Order();
@@ -472,7 +472,7 @@ public class ApiClient {
 				bean.setRelease((Release) getObjectValueOrNull(jsonItem, "release", Release.class));
 				bean.setPrice((PriceBean) getObjectValueOrNull(jsonItem, "price", PriceBean.class));
 				bean.setId(Long.parseLong(getStringValueOrNull(jsonItem, "id")));
-				
+
 				items.add(bean);
 			}
 			order.setItems(items);
@@ -489,11 +489,11 @@ public class ApiClient {
 		}
 		return order;
 	}
-	
+
 	/**
 	 * The Fee resource allows you to quickly calculate the fee (in USD) for selling an item on the Marketplace.
 	 * Calculate the fee for the provided price and currency.
-	 * 
+	 *
 	 * @param price
 	 * @return
 	 * @throws ApiRequestException
@@ -506,20 +506,20 @@ public class ApiClient {
 		}
 		JsonObject jobj = call("marketplace/fee", String.valueOf(price), params, false);
 		if (jobj == null) return null;
-		
+
 		try {
 			fee = (PriceBean) getObjectValueOrNull(jobj, PriceBean.class);
 		} catch (JsonValueObtainException e) {
 			throw new ApiRequestException(e);
 		}
-		
+
 		return fee;
 	}
-	
+
 	/**
 	 * The Profile resource represents user metadata, statistics, and preferences
 	 * Retrieve a user by username.
-	 * 
+	 *
 	 * @param username name of the user.
 
 	 * @return
@@ -527,11 +527,11 @@ public class ApiClient {
 	 */
 	public User getProfile(String username) throws ApiRequestException {
 		User user = null;
-	
+
 		JsonObject jobj = call("users", username, null, false);
 		if (jobj == null) return null;
 		else user = new User();
-		
+
 		user.setId(Long.parseLong(getStringValueOrNull(jobj, "id")));
 		user.setUsername(getStringValueOrNull(jobj, "username"));
 		user.setInventoryUrl(getStringValueOrNull(jobj, "inventory_url"));
@@ -556,11 +556,11 @@ public class ApiClient {
 		user.setFriend(Boolean.getBoolean(getStringValueOrNull(jobj, "is_friend")));
 		return user;
 	}
-	
-	
-	
+
+
+
 	/**
-	 * 
+	 *
 	 * @param method
 	 * @param id
 	 * @param params
@@ -568,9 +568,9 @@ public class ApiClient {
 	 */
 	private JsonObject call(String method, String id, Map<String, String> params, boolean callResp) throws ApiRequestException {
 		JsonObject jobj = null;
-		
+
 		HttpClient httpClient = new DefaultHttpClient();
-		
+
 		HttpGet request;
 		try {
 			// creating the params string
@@ -581,18 +581,17 @@ public class ApiClient {
 					queryString.append("&" + entry.getKey() + "=" + URLEncoder.encode(entry.getValue(), "UTF-8"));
 				}
 			}
-			
+
 			String reqStr = API_URL + "/" + method + "/" + URLEncoder.encode(id, "UTF-8") + "?" +queryString.toString().substring(1)+ "&key="+KEY+"&secret="+SECRET;
 			request = new HttpGet(reqStr);
 			request.addHeader("User-Agent", USER_AGENT);
-			System.out.println("request: " + reqStr);
+			//System.out.println("request: " + reqStr);
 			HttpResponse response = httpClient.execute(request);
-			System.out.println("\nSending 'GET' request to URL : " + reqStr);
-			System.out.println("Response Code : " +
-	                       response.getStatusLine().getStatusCode());
+			//System.out.println("\nSending 'GET' request to URL : " + reqStr);
+			//System.out.println("Response Code : " +response.getStatusLine().getStatusCode());
 
 			BufferedReader rd = new BufferedReader(
-	                       new InputStreamReader(response.getEntity().getContent()));
+					new InputStreamReader(response.getEntity().getContent()));
 
 			StringBuffer result = new StringBuffer();
 			String line = "";
@@ -600,8 +599,8 @@ public class ApiClient {
 				result.append(line);
 			}
 
-			System.out.println(result.toString());
-			
+			//System.out.println(result.toString());
+
 			JsonParser parser = new JsonParser();
 			JsonObject json = (JsonObject) parser.parse(result.toString());
 			if (json.get("message") != null) {
@@ -612,7 +611,7 @@ public class ApiClient {
 				jobj = (JsonObject) json.get("resp");
 			else
 				jobj = json;
-			System.out.println("-->" + jobj);
+			//System.out.println("-->" + jobj);
 		} catch (UnsupportedEncodingException e) {
 			throw new ApiRequestException(e);
 		} catch (ClientProtocolException e) {
@@ -620,10 +619,10 @@ public class ApiClient {
 		} catch (IOException e) {
 			throw new ApiRequestException(e);
 		}
-		
+
 		return jobj;
 	}
-	
+
 	private String[] jsonArrayToStringArray(JsonArray jsonArr) {
 		String[] arr = new String[jsonArr.size()];
 		for (int i = 0; i < jsonArr.size(); i++) {
@@ -631,38 +630,38 @@ public class ApiClient {
 		}
 		return arr;
 	}
-	
+
 	private String getStringValueOrNull(JsonObject jobj, String element) {
 		JsonElement el = jobj.get(element);
 		return (el == null ? null : el.getAsString());
 	}
-	
+
 	private String[] getStringArrayValueOrNull(JsonObject jobj, String element) {
 		JsonArray arrNameVariations = jobj.get(element).getAsJsonArray();
 		return (arrNameVariations == null ? null : jsonArrayToStringArray(arrNameVariations));
 	}
-	
+
 	private <T> List<T> getObjectListOrNull(JsonObject obj, String element, Class<T> klass) throws JsonValueObtainException {
 		List<T> objects = null;
 		JsonArray jarr = (JsonArray) obj.get(element);
 		if (jarr == null) return objects;
 		else objects = new ArrayList<T>(jarr.size());
-		
+
 		for (int i = 0; i < jarr.size(); i++) {
 			JsonObject tmp = (JsonObject) jarr.get(i);
 			@SuppressWarnings("unchecked")
 			T object = (T) getObjectValueOrNull(tmp, klass);
 			objects.add(object);
 		}
-		
+
 		return objects;
 	}
-	
+
 	private <T>Object getObjectValueOrNull(JsonObject obj, String element, Class<T> klass) throws JsonValueObtainException {
 		JsonObject _tmp = obj.get(element).getAsJsonObject();
 		return (_tmp == null ? null: getObjectValueOrNull(_tmp, klass));
 	}
-	
+
 	private <T>Object getObjectValueOrNull(JsonObject obj, Class<T> klass) throws JsonValueObtainException {
 		T o = null;
 		try {
@@ -672,38 +671,38 @@ public class ApiClient {
 				Map.Entry<String, JsonElement> entry = itr.next();
 				// creating the name of the setter-method
 				String methodName = "set" + Utils.prepareMethodName(entry.getKey());
-				
+
 				Method method = null;
 				if ((method = Utils.findMethod(methodName, klass)) != null) {
-					System.out.println("Method: " + method);
+					//System.out.println("Method: " + method);
 					Class<?>[] _tmp = method.getParameterTypes();
 					// setter of the property should always contain more then one parameter
 					if (_tmp.length == 0) break;
 					Class parameterType = _tmp[0];
-					System.out.println("TYPE: " + parameterType.getName());
+					//System.out.println("TYPE: " + parameterType.getName());
 					if ("int".equals(parameterType.getName())) {
 						int value = entry.getValue().getAsInt();
-						System.out.println("\t setting value: " + value);
+						//System.out.println("\t setting value: " + value);
 						method.invoke(o, new Object[] {value});
 					} else
 					if ("java.lang.String".equals(parameterType.getName())) {
 						String value = entry.getValue().getAsString();
-						System.out.println("\t setting value: " + value);
+						//System.out.println("\t setting value: " + value);
 						method.invoke(o, new Object[] {value});
 					} else
 					if ("boolean".equals(parameterType.getName())) {
 						boolean value = entry.getValue().getAsBoolean();
-						System.out.println("\t setting value: " + value);
+						//System.out.println("\t setting value: " + value);
 						method.invoke(o, new Object[] {value});
 					} else
 					if ("long".equals(parameterType.getName())) {
 						long value = entry.getValue().getAsLong();
-						System.out.println("\t setting value: " + value);
+						//System.out.println("\t setting value: " + value);
 						method.invoke(o, new Object[] {value});
 					} else
 					if ("double".equals(parameterType.getName())) {
 						double value = entry.getValue().getAsDouble();
-						System.out.println("\t setting value: " + value);
+						//System.out.println("\t setting value: " + value);
 						method.invoke(o, new Object[] {value});
 					}
 					// TODO: proceed class
@@ -718,9 +717,9 @@ public class ApiClient {
 		} catch (InvocationTargetException e) {
 			throw new JsonValueObtainException(e);
 		}
-		
+
 		return o;
 	}
-	
-	
+
+
 }
