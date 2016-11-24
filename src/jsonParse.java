@@ -6,6 +6,7 @@ import org.json.simple.parser.JSONParser;
 
 import java.io.File;
 import java.io.FileReader;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -16,9 +17,12 @@ import org.json.simple.JSONObject;
 
 public class jsonParse {
 
+    static ArrayList<musicdata> localmusiclist = new ArrayList<musicdata>();
+
     public static void main(String args[]) {
         JSONParser parser = new JSONParser();
         ArrayList<String> listoftwit = new ArrayList<String>();
+        ArrayList<musicdata> candidatelist = new ArrayList<musicdata>();
         String temp;
         String content;
         String cleancontent;
@@ -41,8 +45,15 @@ public class jsonParse {
                 listoftwit.add(cleancontent);
 
             }
+            int i = 0;
+
+            // Menambahkan daftar kandidat
+            for (i=0;i<listoftwit.size();i++){
+                addtomusiclist(listoftwit.get(i));
+            }
 
             System.out.println(listoftwit.get(333));
+            System.out.println(localmusiclist.get(300).getArtist());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -66,7 +77,6 @@ public class jsonParse {
     private static void addtomusiclist(String input){
         String sep1 = "-";
         String sep2 = "by";
-        ArrayList<musicdata> localmusiclist = new ArrayList<musicdata>();
 
         Pattern p1 = Pattern.compile(input);
 
@@ -95,6 +105,7 @@ public class jsonParse {
             String[] candidate = input.split("by");
             localmusiclist.add(new musicdata(candidate[1], candidate[0]));
         }
+
     }
 }
 
