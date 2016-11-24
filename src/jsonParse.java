@@ -28,7 +28,7 @@ public class jsonParse {
         String cleancontent;
         String urlPattern = "((https?|ftp|gopher|telnet|file|Unsure|http):((//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)";
         String hashtagPattern = "#\\w+";
-
+        String bintangPattern = "\\*";
         try {
 
             File f = new File("music.json");
@@ -41,6 +41,7 @@ public class jsonParse {
 
                 cleancontent = removeUnused(content, hashtagPattern);
                 cleancontent = removeUnused(cleancontent, urlPattern);
+                cleancontent = removeUnused(cleancontent, bintangPattern);
 
                 listoftwit.add(cleancontent);
 
@@ -52,8 +53,8 @@ public class jsonParse {
                 addtomusiclist(listoftwit.get(i));
             }
 
-            System.out.println(listoftwit.get(333));
-            System.out.println(localmusiclist.get(300).getArtist());
+            System.out.println(listoftwit.get(10));
+            System.out.println(localmusiclist.get(25).getSong());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -78,10 +79,10 @@ public class jsonParse {
         String sep1 = "-";
         String sep2 = "by";
 
-        Pattern p1 = Pattern.compile(input);
+        Pattern p1 = Pattern.compile(sep1);
 
         //Masalah match dengan pola "-"
-        Matcher matcher1 = p1.matcher(sep1);
+        Matcher matcher1 = p1.matcher(input);
         int count = 0;
         while(matcher1.find()){
             count++;
@@ -95,13 +96,15 @@ public class jsonParse {
             }
         }
 
+        Pattern p2 = Pattern.compile(sep2);
+
         //Masalah match dengan pola by
-        Matcher matcher2 = p1.matcher(sep2);
+        Matcher matcher2 = p2.matcher(input);
         int count2 = 0;
         while (matcher2.find()){
-            count++;
+            count2++;
         }
-        if (count > 0){
+        if (count2 > 0){
             String[] candidate = input.split("by");
             localmusiclist.add(new musicdata(candidate[1], candidate[0]));
         }
