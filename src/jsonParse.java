@@ -59,7 +59,6 @@ public class jsonParse {
             ex.printStackTrace();
         }
     }
-
     private static String removeUnused(String commentstr, String pattern){
 
         String removePattern = pattern;
