@@ -26,12 +26,14 @@ public class StringClusterer {
     
     double threshold = 1;
     int min_points = 6;
+    int to_keep = 5000;
+    
     public static void main(String[] args) throws Exception {
         MusicDataLoader load = new MusicDataLoader("music.json");
         ArrayList<musicdata> arr = load.load();   
         musicdata.removeNoise(arr);
         ArrayList<String> tem = musicdata.convert(arr, true);
-        StringClusterer clust = new StringClusterer(1, 2);
+        StringClusterer clust = new StringClusterer(1, 2, 5000);
         ArrayList<ArrayList<String>> ret = clust.cluster(tem);
         
         for (ArrayList<String> ar : ret) {
@@ -42,18 +44,23 @@ public class StringClusterer {
         
     }
     
-    public StringClusterer(double threshold, int min_points) {
+    public StringClusterer(double threshold, int min_points, int keep) {
         this.threshold = threshold;
         this.min_points = min_points;
+        to_keep = keep;
     }
     
     public ArrayList<ArrayList<String>> cluster(ArrayList<String> tem) throws Exception {
         Instances source = listLoad(tem);        
         
         StringToWordVector vect = new StringToWordVector();
+        vect.setWordsToKeep(to_keep);
         vect.setInputFormat(source);
         Instances datas = Filter.useFilter(source, vect);
-        
+        //vect.setDoNotOperateOnPerClassBasis(true);        
+        //System.out.println("ASDASD" + vect.wordsToKeepTipText());
+        //System.out.println(datas.numAttributes());
+        //System.out.println("ASDASD" + vect.getWordsToKeep());
         DBSCAN clusterer = new DBSCAN();
         clusterer.setEpsilon(threshold);
         clusterer.setMinPoints(min_points);
