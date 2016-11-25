@@ -27,7 +27,7 @@ public class NLPMusic {
         ArrayList<musicdata> arr = load.load();
         musicdata.removeNoise(arr);
         ArrayList<String> tem = musicdata.convert(arr, true);
-        StringClusterer clust = new StringClusterer(1, 2);
+        StringClusterer clust = new StringClusterer(1, 2, 10000);
         ArrayList<ArrayList<String>> ret = clust.cluster(tem);
         
         
@@ -74,8 +74,9 @@ public class NLPMusic {
         }   
         
         
-        System.out.println("TOP ARTIST");
+        System.out.println("\n\nTOP ARTIST");
         System.out.println(artists.get(iter));
+        System.out.println("\n\nTotal Docs = " + arr.size());
     }
     
 }
